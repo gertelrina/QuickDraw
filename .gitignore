@@ -1,0 +1,5 @@
+.venv/
+
+hymenoptera_data/
+
+__pycache__
