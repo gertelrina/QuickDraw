@@ -5,17 +5,15 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
 import numpy as np
-from torchvision import transforms, datasets
 import time
 import os
-import copy
 
-from common import mobilenetv3, data_loader, pipeline, mmodel
+from common import mobilenetv3, pipeline, mmodel
 
 def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dataset_sizes, num_epochs=25):
     since = time.time()
 
-    best_model_wts = copy.deepcopy(model.state_dict())
+    mmodel.save_model(model, "pretrained/best_model")
     best_acc = 0.0
 
     for epoch in range(num_epochs):
@@ -67,7 +65,7 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dat
             # deep copy the model
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
-                best_model_wts = copy.deepcopy(model.state_dict())
+                mmodel.save_model(model, "pretrained/best_model")
 
         print()
 
@@ -77,36 +75,13 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dat
     print('Best val Acc: {:4f}'.format(best_acc))
 
     # load best model weights
-    model.load_state_dict(best_model_wts)
+    model = mmodel.load_model("pretrained/best_model")
     return model
 
 def train_mnetv3(num_epochs=25):
-    # Data augmentation and normalization for training
-    # Just normalization for validation
-    data_transforms = {
-        'train': transforms.Compose([
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ]),
-        'val': transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ]),
-    }
-
-
-    data_dir = "data"
-    image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x])
-                    for x in ['train', 'val']}
-    dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=16,
-                                                shuffle=True, num_workers=0)
-                for x in ['train', 'val']}
-    dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
-    class_names = image_datasets['train'].classes
+    dataloaders = mmodel.create_dataloaders()
+    dataset_sizes = {x: len(dataloaders[x].dataset) for x in ['train', 'val']}
+    class_names = dataloaders['train'].dataset.classes
 
     device = mmodel.get_device()
 
@@ -116,11 +91,9 @@ def train_mnetv3(num_epochs=25):
 
     criterion = nn.CrossEntropyLoss()
 
-    # Observe that all parameters are being optimized
-    optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
+    optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
 
-    # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
+    exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, T_max=7)
 
     model_ft = pipeline.train_model(model_ft, dataloaders, criterion, optimizer_ft, exp_lr_scheduler, device, dataset_sizes, num_epochs=num_epochs)
-    return (model_ft, dataloaders, class_names)
+    return model_ft
