@@ -3,3 +3,11 @@
 hymenoptera_data/
 
 __pycache__
+
+data/
+data_json/*
+!data_json/*.py
+!data_json/*.zip
+
+common/visualization.py
+.ipynb
