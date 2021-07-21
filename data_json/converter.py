@@ -4,11 +4,13 @@ import pandas as pd
 import os
 import cv2
 
-from common.mmodel import get_classes
-
 def load(path):
     with open(path) as f:
         return json.load(f)
+
+def get_classes(path="data_json/names.csv", sep=","):
+    classes = pd.read_csv(path, sep=sep).iloc[:,1]
+    return classes.tolist()
 
 def make_dir(path):
     dirs = path.split(sep="/")
@@ -29,7 +31,6 @@ def convert():
         for i, img in enumerate(X[phase]):
             full_dir = f"data/{phase}/{classes[y[phase][i]]}"
             make_dir(full_dir)
-            img = cv2.resize(img, (224, 224))
-            cv2.imwrite(full_dir + f"/{i}.jpg", img)
+            cv2.imwrite(full_dir + f"/{i}.png", img)
 
     
