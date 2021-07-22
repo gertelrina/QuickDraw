@@ -1,6 +1,22 @@
+<<<<<<< Updated upstream:WebcamPaint.py 
+=======
+# #puts openvino to the PATH
+# import os
+# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\ngraph\\lib")
+# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\inference_engine\\external\\tbb\\bin")
+# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\inference_engine\\bin\\intel64\\Release")
+# #os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\inference_engine\\external\\hddl\\bin")
+# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\opencv\\bin")
+import cv2
+
+
+>>>>>>> Stashed changes:camera_classifier/WebCam.py
 import numpy as np
 import cv2
 from collections import deque
+from gtts import gTTS
+from pygame import mixer
+import time
 
 # Define the upper and lower boundaries for a color to be considered "Blue"
 blueLower = np.array([100, 60, 60])
@@ -15,24 +31,35 @@ bpoints = [deque(maxlen=1000)]
 bindex = 0
 
 colors = [(255, 255, 255)]
+
 colorIndex = 0
 
 # Setup the Paint interface
-paintWindow = np.zeros((720, 1280,3)) + 0
-
+paintWindow = np.zeros((1280, 1280,3)) + 0
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 cv2.getWindowImageRect('Paint')
 
 # Load the video
 camera = cv2.VideoCapture(0)
 
-# Switcher for 1.TurnOn/Off 2.Once append 3.Save 4.Counter
-l1 = 1
-l2 = 1
-l3 = 1
+# Switcher for 1.TurnOn/Off drawing 2.Once append deq 
+swTurnOnOff = 1
+onceAppend = 1
 
 # Counter of image
-c = 0
+counterIMG = 0
+
+# String of prediction type and label
+predictString = ' '
+
+# Language of voice
+languageVo = 'en'
+
+# For vocalize prediction
+mixer.init()
+
+# File for save and load vocalize
+fileVoice = "1.mp3"
 
 while True:
     # Grab the current paintWindow
@@ -43,11 +70,12 @@ while True:
     cv2.putText(frame, "CLEAR ALL - press the 'c' key", (49, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(frame, "SENT - press the 's' key", (49, 66), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(frame, "STOP DRAWING - press the 'h' key", (49, 99), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(frame, "{} sent".format(c) , (600, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-    if(l1==1):
+    cv2.putText(frame, "{} sent".format(counterIMG) , (600, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    if(swTurnOnOff==1):
         cv2.putText(frame, "Turn On" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     else:
         cv2.putText(frame, "Turn Off" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(frame, predictString, (49, 680), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
 
     # Check to see if we have reached the end of the video
     if not grabbed:
@@ -77,39 +105,87 @@ while True:
         center = (int(M['m10'] / M['m00']), int(M['m01'] / M['m00']))
 
         # Append new points in currently deq
-        if colorIndex == 0 and l1 == 1:
+        if colorIndex == 0 and swTurnOnOff == 1:
             bpoints[bindex].appendleft(center)
 
     # Clear paintWindow 
     if cv2.waitKey(20) & 0xFF == ord("c"):
         bpoints = [deque(maxlen=512)]
         bindex = 0
+<<<<<<< Updated upstream:WebcamPaint.py 
         paintWindow[67:,:,:] = 0
         
-    # Sent key
-    if (cv2.waitKey(20) & 0xFF == ord("s")) and l3 == 1:
+=======
+        paintWindow[:,:,:] = 0
 
+>>>>>>> Stashed changes:camera_classifier/WebCam.py
+    # Sent key
+    if (cv2.waitKey(20) & 0xFF == ord("s")):
+
+<<<<<<< Updated upstream:WebcamPaint.py 
         # ..... modifying line for project .....
         cv2.imwrite("image_{}.jpg".format(c), paintWindow)
         # ..... modifying line for project .....
+=======
+        log.info("Start IE classification sample")
 
-        l3 = -1
+        # Create InferenceEngineClassifier object
+        ie_classifier = InferenceEngineClassifier(
+            configPath=r"model.xml", 
+            weightsPath=r'model.bin', 
+            device=r'CPU', 
+            extension=r"CPU", 
+            classesPath=r'names.txt')
+            
+                
+        # Classify image
+        prob = ie_classifier.classify(paintWindow)
+            
+        # Get top 5 predictions
+        predictions = ie_classifier.get_top(prob)
+            
+        labels = [ie_classifier.labels_map[x] for x in predictions]
+        
+        log.info("Predictions: " + str(predictions) + str(labels))
+>>>>>>> Stashed changes:camera_classifier/WebCam.py
+
+        # Change PredictString
+        predictString = "Predictions: " + str(predictions) + str(labels) 
+
+        #  Create and play vocalize of prediction
+        voice = gTTS(text = predictString, lang = languageVo, slow = False)
+        voice.save(fileVoice)
+        mixer.music.load(fileVoice)
+        mixer.music.play()
+
+        # Clear paintWindow
         bpoints = [deque(maxlen=512)]
         bindex = 0
+<<<<<<< Updated upstream:WebcamPaint.py 
         paintWindow[67:,:,:] = 0
         c+=1
         
+=======
+        paintWindow[:,:,:] = 0
+        counterIMG+=1
+
+>>>>>>> Stashed changes:camera_classifier/WebCam.py
     # Change switcher for stop/start drawing
     if cv2.waitKey(20) & 0xFF == ord("h"):
-        l1 = -l1
-        l2 = 1
+        swTurnOnOff = -swTurnOnOff
+        onceAppend = 1
 
     # Create the next new deq for lines   
-    if l1 == -1 and l2 == 1:
+    if swTurnOnOff == -1 and onceAppend == 1:
         bpoints.append(deque(maxlen=1000))
         bindex += 1
+<<<<<<< Updated upstream:WebcamPaint.py 
         l2 = -1
           
+=======
+        onceAppend = -1
+
+>>>>>>> Stashed changes:camera_classifier/WebCam.py
     # If the 'q' key is pressed, stop the loop
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
