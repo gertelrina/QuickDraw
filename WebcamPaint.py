@@ -1,16 +1,4 @@
-<<<<<<< Updated upstream:WebcamPaint.py 
-=======
-# #puts openvino to the PATH
-# import os
-# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\ngraph\\lib")
-# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\inference_engine\\external\\tbb\\bin")
-# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\inference_engine\\bin\\intel64\\Release")
-# #os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\deployment_tools\\inference_engine\\external\\hddl\\bin")
-# os.add_dll_directory("C:\\Program Files (x86)\\Intel\\openvino_2021.3.394\\opencv\\bin")
-import cv2
 
-
->>>>>>> Stashed changes:camera_classifier/WebCam.py
 import numpy as np
 import cv2
 from collections import deque
@@ -112,45 +100,16 @@ while True:
     if cv2.waitKey(20) & 0xFF == ord("c"):
         bpoints = [deque(maxlen=512)]
         bindex = 0
-<<<<<<< Updated upstream:WebcamPaint.py 
-        paintWindow[67:,:,:] = 0
-        
-=======
         paintWindow[:,:,:] = 0
 
->>>>>>> Stashed changes:camera_classifier/WebCam.py
     # Sent key
     if (cv2.waitKey(20) & 0xFF == ord("s")):
-
-<<<<<<< Updated upstream:WebcamPaint.py 
         # ..... modifying line for project .....
         cv2.imwrite("image_{}.jpg".format(c), paintWindow)
         # ..... modifying line for project .....
-=======
-        log.info("Start IE classification sample")
-
-        # Create InferenceEngineClassifier object
-        ie_classifier = InferenceEngineClassifier(
-            configPath=r"model.xml", 
-            weightsPath=r'model.bin', 
-            device=r'CPU', 
-            extension=r"CPU", 
-            classesPath=r'names.txt')
-            
-                
-        # Classify image
-        prob = ie_classifier.classify(paintWindow)
-            
-        # Get top 5 predictions
-        predictions = ie_classifier.get_top(prob)
-            
-        labels = [ie_classifier.labels_map[x] for x in predictions]
-        
-        log.info("Predictions: " + str(predictions) + str(labels))
->>>>>>> Stashed changes:camera_classifier/WebCam.py
 
         # Change PredictString
-        predictString = "Predictions: " + str(predictions) + str(labels) 
+        # predictString = "Predictions: " + str(predictions) + str(labels) 
 
         #  Create and play vocalize of prediction
         voice = gTTS(text = predictString, lang = languageVo, slow = False)
@@ -161,15 +120,9 @@ while True:
         # Clear paintWindow
         bpoints = [deque(maxlen=512)]
         bindex = 0
-<<<<<<< Updated upstream:WebcamPaint.py 
-        paintWindow[67:,:,:] = 0
-        c+=1
-        
-=======
         paintWindow[:,:,:] = 0
         counterIMG+=1
 
->>>>>>> Stashed changes:camera_classifier/WebCam.py
     # Change switcher for stop/start drawing
     if cv2.waitKey(20) & 0xFF == ord("h"):
         swTurnOnOff = -swTurnOnOff
@@ -179,13 +132,9 @@ while True:
     if swTurnOnOff == -1 and onceAppend == 1:
         bpoints.append(deque(maxlen=1000))
         bindex += 1
-<<<<<<< Updated upstream:WebcamPaint.py 
-        l2 = -1
-          
-=======
         onceAppend = -1
 
->>>>>>> Stashed changes:camera_classifier/WebCam.py
+
     # If the 'q' key is pressed, stop the loop
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
