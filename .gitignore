@@ -11,3 +11,7 @@ data_json/*
 
 common/visualization.py
 .ipynb
+
+pretrained/*
+!pretrained/*.pth
+!pretrained/*.onnx

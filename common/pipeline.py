@@ -7,12 +7,16 @@ from torch.optim import lr_scheduler
 import numpy as np
 import time
 import os
+from itertools import cycle
 
 from common import mobilenetv3, pipeline, mmodel
 
 def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dataset_sizes, num_epochs=25):
     since = time.time()
-
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    print(next(model.parameters()).is_cuda)
+    waiting = ["-", "/", "\\"]
+    waiting = cycle(waiting)
     mmodel.save_model(model, "pretrained/best_model")
     best_acc = 0.0
 
@@ -29,12 +33,13 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dat
 
             running_loss = 0.0
             running_corrects = 0
-
+            total_batch_num = (dataset_sizes[phase] + 63) // 64
             # Iterate over data.
-            for inputs, labels in dataloaders[phase]:
+            for i, (inputs, labels) in enumerate(dataloaders[phase]):
                 inputs = inputs.to(device)
                 labels = labels.to(device)
-
+                #print(f"\r{waiting[i//3]}")
+                print(f"\r{next(waiting)} {i/total_batch_num*100:.2f}%", end="")
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
@@ -59,7 +64,7 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dat
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-            print('{} Loss: {:.4f} Acc: {:.4f}'.format(
+            print('\r{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
 
             # deep copy the model
@@ -78,22 +83,26 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, device, dat
     model = mmodel.load_model("pretrained/best_model")
     return model
 
-def train_mnetv3(num_epochs=25):
+def train_mnetv3(num_epochs=25, pretrained=False):
     dataloaders = mmodel.create_dataloaders()
     dataset_sizes = {x: len(dataloaders[x].dataset) for x in ['train', 'val']}
     class_names = dataloaders['train'].dataset.classes
 
     device = mmodel.get_device()
 
-    model_ft = mobilenetv3.mobilenetv3_large(num_classes=len(class_names))
+    if pretrained:
+        model_ft = mmodel.load_model()
+    else:
+        model_ft = mobilenetv3.mobilenetv3_large(num_classes=len(class_names))
 
     model_ft = model_ft.to(device)
 
     criterion = nn.CrossEntropyLoss()
 
-    optimizer_ft = optim.Adam(model_ft.parameters(), lr=0.001)
+    optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
 
-    exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, T_max=7)
+    # exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, T_max=7)
+    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
     model_ft = pipeline.train_model(model_ft, dataloaders, criterion, optimizer_ft, exp_lr_scheduler, device, dataset_sizes, num_epochs=num_epochs)
     return model_ft
