@@ -30,12 +30,11 @@ camera = cv2.VideoCapture(0)
 l1 = 1
 l2 = 1
 l3 = 1
-l4 = 0
+
 # Counter of image
 c = 0
 
 while True:
-    l4+=1
     # Grab the current paintWindow
     (grabbed, frame) = camera.read()
     frame = cv2.flip(frame, 1)
@@ -49,14 +48,6 @@ while True:
         cv2.putText(frame, "Turn On" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     else:
         cv2.putText(frame, "Turn Off" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-    if(l3!=1):
-        cv2.putText(frame, "X" , (900, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-    else:
-        cv2.putText(frame, "O" , (900, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-
-
-
-
 
     # Check to see if we have reached the end of the video
     if not grabbed:
@@ -97,6 +88,7 @@ while True:
         
     # Sent key
     if (cv2.waitKey(20) & 0xFF == ord("s")) and l3 == 1:
+
         # ..... modifying line for project .....
         cv2.imwrite("image_{}.jpg".format(c), paintWindow)
         # ..... modifying line for project .....
@@ -118,10 +110,6 @@ while True:
         bindex += 1
         l2 = -1
           
-    if(l4 > 5):
-        l3 = 1
-        l4 = 0
-
     # If the 'q' key is pressed, stop the loop
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
