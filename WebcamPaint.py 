@@ -26,13 +26,16 @@ cv2.getWindowImageRect('Paint')
 # Load the video
 camera = cv2.VideoCapture(0)
 
-# Switcher
+# Switcher for 1.TurnOn/Off 2.Once append 3.Save 4.Counter
 l1 = 1
 l2 = 1
+l3 = 1
+l4 = 0
 # Counter of image
 c = 0
 
 while True:
+    l4+=1
     # Grab the current paintWindow
     (grabbed, frame) = camera.read()
     frame = cv2.flip(frame, 1)
@@ -46,6 +49,12 @@ while True:
         cv2.putText(frame, "Turn On" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     else:
         cv2.putText(frame, "Turn Off" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    if(l3!=1):
+        cv2.putText(frame, "X" , (900, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+    else:
+        cv2.putText(frame, "O" , (900, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+
 
 
 
@@ -65,8 +74,8 @@ while True:
 
     # Check to see if any contours were found
     if len(cnts) > 0:
-    	# Sort the contours and find the largest one -- we
-    	# will assume this contour correspondes to the area
+        # Sort the contours and find the largest one -- we
+        # will assume this contour correspondes to the area
         cnt = sorted(cnts, key = cv2.contourArea, reverse = True)[0]
         # Get the radius of the enclosing circle around the found contour
         ((x, y), radius) = cv2.minEnclosingCircle(cnt)
@@ -76,44 +85,46 @@ while True:
         M = cv2.moments(cnt)
         center = (int(M['m10'] / M['m00']), int(M['m01'] / M['m00']))
 
-        # Clear paintWindow 
-        if cv2.waitKey(1) & 0xFF == ord("c"):
-            bpoints = [deque(maxlen=512)]
-            bindex = 0
-            paintWindow[67:,:,:] = 0
-        
-        # Sent key
-        if cv2.waitKey(1) & 0xFF == ord("s"):
-            # ..... modifying line for project .....
-            cv2.imwrite("image_{}.jpg".format(c), paintWindow)
-            # ..... modifying line for project .....
-
-            bpoints = [deque(maxlen=512)]
-            bindex = 0
-            paintWindow[67:,:,:] = 0
-            c+=1
-        
-        # Change switcher for stop/start drawing
-        if cv2.waitKey(1) & 0xFF == ord("h"):
-            l1 = -l1
-            l2 = 1
-
-        # Create the next new deq for lines   
-        if l1 == -1 and l2 == 1:
-            bpoints.append(deque(maxlen=1000))
-            bindex += 1
-            l2 = -1
-        
         # Append new points in currently deq
         if colorIndex == 0 and l1 == 1:
-             bpoints[bindex].appendleft(center)
+            bpoints[bindex].appendleft(center)
 
+    # Clear paintWindow 
+    if cv2.waitKey(20) & 0xFF == ord("c"):
+        bpoints = [deque(maxlen=512)]
+        bindex = 0
+        paintWindow[67:,:,:] = 0
+        
+    # Sent key
+    if (cv2.waitKey(20) & 0xFF == ord("s")) and l3 == 1:
+        # ..... modifying line for project .....
+        cv2.imwrite("image_{}.jpg".format(c), paintWindow)
+        # ..... modifying line for project .....
 
-    # Append the next deque when no contours are detected
-    else:
+        l3 = -1
+        bpoints = [deque(maxlen=512)]
+        bindex = 0
+        paintWindow[67:,:,:] = 0
+        c+=1
+        
+    # Change switcher for stop/start drawing
+    if cv2.waitKey(20) & 0xFF == ord("h"):
+        l1 = -l1
+        l2 = 1
+
+    # Create the next new deq for lines   
+    if l1 == -1 and l2 == 1:
         bpoints.append(deque(maxlen=1000))
         bindex += 1
+        l2 = -1
+          
+    if(l4 > 5):
+        l3 = 1
+        l4 = 0
 
+    # If the 'q' key is pressed, stop the loop
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
 
     # Draw lines of all the colors
     # points = [bpoints]
@@ -130,10 +141,6 @@ while True:
     cv2.imshow("Tracking", frame)
     cv2.imshow("Paint", paintWindow)
     
-	# If the 'q' key is pressed, stop the loop
-    if cv2.waitKey(1) & 0xFF == ord("q"):
-        break
-
 # Cleanup the camera and close any open windows
 camera.release()
 cv2.destroyAllWindows()
