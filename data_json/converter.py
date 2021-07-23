@@ -1,6 +1,7 @@
 import json
 import numpy as np
 from torchvision import datasets
+import pandas as pd
 import os
 import cv2
 
@@ -28,7 +29,7 @@ def convert():
     for phase in ["train", "val"]:
         y[phase] = np.array(y[phase], dtype="uint8")
 
-    classes = get_classes()
+    classes = pd.read_csv("data_json/names.csv", sep=",").iloc[:,1].tolist()
 
     for phase in ["train", "val"]:
         for i, img in enumerate(X[phase]):
