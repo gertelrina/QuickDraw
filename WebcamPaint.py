@@ -91,6 +91,7 @@ size = 560
 
 # Setup the Paint interface
 paintWindow = np.zeros((size, size, 3)) + 0
+
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 cv2.getWindowImageRect('Paint')
 
@@ -114,12 +115,15 @@ languageVo = 'en'
 mixer.init()
 
 # File for save and load vocalize
+
 fileVoice = "tts.mp3"
+
 
 while True:
     # Grab the current paintWindow
     (grabbed, frame) = camera.read()
     frame = frame[:size, :size]
+
     frame = cv2.flip(frame, 1)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -193,6 +197,7 @@ while True:
             voice.save(fileVoice)
             mixer.music.load(fileVoice)
             mixer.music.play()
+
 
         # Clear paintWindow
         bpoints = [deque(maxlen=512)]
