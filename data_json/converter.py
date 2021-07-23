@@ -1,6 +1,6 @@
 import json
 import numpy as np
-import pandas as pd
+from torchvision import datasets
 import os
 import cv2
 
@@ -8,9 +8,9 @@ def load(path):
     with open(path) as f:
         return json.load(f)
 
-def get_classes(path="data_json/names.csv", sep=","):
-    classes = pd.read_csv(path, sep=sep).iloc[:,1]
-    return classes.tolist()
+def get_classes():
+    dataset = datasets.ImageFolder("data/val")
+    return dataset.classes
 
 def make_dir(path):
     dirs = path.split(sep="/")
