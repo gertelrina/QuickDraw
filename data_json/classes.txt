@@ -1,0 +1,91 @@
+The Eiffel Tower
+airplane
+apple
+axe
+banana
+basket
+bat
+bed
+belt
+bicycle
+birthday cake
+book
+boomerang
+brain
+bridge
+bucket
+bus
+cake
+camera
+candle
+cannon
+car
+carrot
+castle
+cat
+cell phone
+chair
+circle
+clock
+cloud
+cookie
+cow
+crown
+cruise ship
+dog
+donut
+duck
+ear
+eye
+face
+fish
+flashlight
+flower
+fork
+guitar
+hammer
+hat
+hexagon
+house
+hurricane
+ice cream
+key
+knife
+laptop
+leaf
+line
+lollipop
+motorbike
+mountain
+mushroom
+nose
+palm tree
+pants
+pencil
+pickup truck
+pineapple
+pizza
+rabbit
+rainbow
+saw
+scissors
+shark
+skyscraper
+smiley face
+sock
+spider
+spoon
+square
+stairs
+suitcase
+sun
+sword
+t-shirt
+telephone
+tornado
+tractor
+tree
+triangle
+truck
+wine bottle
+wine glass

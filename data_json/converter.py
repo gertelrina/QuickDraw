@@ -8,9 +8,12 @@ def load(path):
     with open(path) as f:
         return json.load(f)
 
-def get_classes():
+def create_classes():
     dataset = datasets.ImageFolder("data/val")
-    return dataset.classes
+    classes = dataset.classes
+    with open("data_json/classes.txt", "w") as f:
+        f.write("\n".join(classes))
+    return
 
 def make_dir(path):
     dirs = path.split(sep="/")

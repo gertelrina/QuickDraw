@@ -8,6 +8,7 @@ data/
 data_json/*
 !data_json/*.py
 !data_json/*.zip
+!data_json/*.txt
 
 common/visualization.py
 .ipynb
