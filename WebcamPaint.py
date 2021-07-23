@@ -1,14 +1,79 @@
-
+import os
 import numpy as np
 import cv2
 from collections import deque
+import glog as log
 from gtts import gTTS
 from pygame import mixer
 import time
 
+from openvino.inference_engine import IENetwork, IECore
+
+# from Classifier import InferenceEngineClassifier
+class InferenceEngineClassifier:
+    def __init__(self, configPath=None, weightsPath=None,
+            device='CPU', extension=None, classesPath=None):
+        
+        # Add code for Inference Engine initialization
+        self.ie = IECore()
+        
+        # Add code for model loading
+        self.net = self.ie.read_network(model=configPath)
+        self.exec_net = self.ie.load_network(network=self.net, device_name=device)
+
+        # Add code for classes names loading
+        with open(classesPath, 'r') as f:
+            self.labels_map = f.read().split(sep="\n")
+
+        # self.labels_map = get_classes()
+        return
+
+    def get_top(self, prob, topN=1):
+        result = []
+        
+        # Add code for getting top predictions
+        result = np.squeeze(prob)
+        result = np.argsort(result)[-topN:][::-1]
+        
+        return result
+
+    def _prepare_image(self, image, h, w):
+    
+        # Add code for image preprocessing
+        image = cv2.resize(image, (w, h))
+        image = image.transpose((2, 0, 1))
+        
+        return image
+
+    def classify(self, image):
+        probabilities = None
+        
+        # Add code for image classification using Inference Engine
+        input_blob = next(iter(self.net.input_info)) 
+        out_blob = next(iter(self.net.outputs))
+        
+        n, c, h, w = self.net.input_info[input_blob].input_data.shape
+        
+        image = self._prepare_image(image, h, w)
+
+        output = self.exec_net.infer(inputs = {input_blob: image})
+        
+        output = output[out_blob]
+        
+        return output
+
+# Create InferenceEngineClassifier object
+ie_classifier = InferenceEngineClassifier(
+    configPath=r"mo_model/model.xml", 
+    weightsPath=r'mo_model/model.bin', 
+    device=r'CPU', 
+    extension=r"CPU", 
+    classesPath=r'data_json/classes.txt',
+)
+
 # Define the upper and lower boundaries for a color to be considered "Blue"
-blueLower = np.array([100, 60, 60])
-blueUpper = np.array([140, 255, 255])
+blueLower = np.array([110,50,50])
+blueUpper = np.array([130,255,255])
 
 # Define a 5x5 kernel for erosion and dilation
 kernel = np.ones((5, 5), np.uint8)
@@ -22,8 +87,11 @@ colors = [(255, 255, 255)]
 
 colorIndex = 0
 
+size = 560
+
 # Setup the Paint interface
-paintWindow = np.zeros((1280, 1280,3)) + 0
+paintWindow = np.zeros((size, size, 3)) + 0
+
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 cv2.getWindowImageRect('Paint')
 
@@ -47,11 +115,15 @@ languageVo = 'en'
 mixer.init()
 
 # File for save and load vocalize
-fileVoice = "1.mp3"
+
+fileVoice = "tts.mp3"
+
 
 while True:
     # Grab the current paintWindow
     (grabbed, frame) = camera.read()
+    frame = frame[:size, :size]
+
     frame = cv2.flip(frame, 1)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -104,18 +176,28 @@ while True:
 
     # Sent key
     if (cv2.waitKey(20) & 0xFF == ord("s")):
-        # ..... modifying line for project .....
-        cv2.imwrite("image_{}.jpg".format(c), paintWindow)
-        # ..... modifying line for project .....
+        log.info("Start IE classification sample")
 
-        # Change PredictString
-        # predictString = "Predictions: " + str(predictions) + str(labels) 
+                
+        # Classify image
+        prob = ie_classifier.classify(paintWindow)
+            
+        # Get top 5 predictions
+        predictions = ie_classifier.get_top(prob)
+            
+        labels = [ie_classifier.labels_map[x] for x in predictions]
+        
+        predictString = "Prediction: " + labels[0]
+        log.info(predictString)
 
         #  Create and play vocalize of prediction
-        voice = gTTS(text = predictString, lang = languageVo, slow = False)
-        voice.save(fileVoice)
-        mixer.music.load(fileVoice)
-        mixer.music.play()
+        if predictString:
+            # os.remove(fileVoice)
+            voice = gTTS(text = predictString, lang = languageVo, slow = False)
+            voice.save(fileVoice)
+            mixer.music.load(fileVoice)
+            mixer.music.play()
+
 
         # Clear paintWindow
         bpoints = [deque(maxlen=512)]
