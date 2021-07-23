@@ -87,7 +87,7 @@ colors = [(255, 255, 255)]
 
 colorIndex = 0
 
-size = 560
+size = 720
 
 # Setup the Paint interface
 paintWindow = np.zeros((size, size, 3)) + 0
@@ -115,8 +115,7 @@ languageVo = 'en'
 mixer.init()
 
 # File for save and load vocalize
-
-fileVoice = "tts.mp3"
+fileVoice = "tts{}.mp3".format(counterIMG)
 
 
 while True:
@@ -130,12 +129,13 @@ while True:
     cv2.putText(frame, "CLEAR ALL - press the 'c' key", (49, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(frame, "SENT - press the 's' key", (49, 66), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.putText(frame, "STOP DRAWING - press the 'h' key", (49, 99), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(frame, "{} sent".format(counterIMG) , (600, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    # cv2.putText(frame, "{} sent".format(counterIMG) , (600, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     if(swTurnOnOff==1):
-        cv2.putText(frame, "Turn On" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, "Turn On" , (580, 66), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     else:
-        cv2.putText(frame, "Turn Off" , (800, 33), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(frame, "Turn Off" , (580, 66), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.putText(frame, predictString, (49, 680), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+
 
     # Check to see if we have reached the end of the video
     if not grabbed:
@@ -192,7 +192,6 @@ while True:
 
         #  Create and play vocalize of prediction
         if predictString:
-            # os.remove(fileVoice)
             voice = gTTS(text = predictString, lang = languageVo, slow = False)
             voice.save(fileVoice)
             mixer.music.load(fileVoice)
