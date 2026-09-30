@@ -177,21 +177,21 @@ mo --input_model pretrained/model.onnx --output_dir mo_model \
 ## Awards
 
 - 🥇 **1st place** in the project competition of the Intel Summer School on Computer Vision, held jointly with Lobachevsky University (UNN), July 5–23, 2021
-- 🎓 **Participant** of the Intel Winter School on performance optimization of computer vision algorithms, Lobachevsky University (UNN), Nizhny Novgorod, February 1–6, 2021
+- 🎓 **Certificate of participation**, Intel Summer School on Computer Vision, July 5–23, 2021
 
 <table>
   <tr>
-    <td align="center" width="40%">
+    <td align="center" width="50%">
       <a href="assets/certificates/Intel_competition_winner.pdf">
-        <img src="assets/certificates/Intel_competition_winner.png" alt="Certificate: 1st place, Intel Summer School 2021" height="360">
+        <img src="assets/certificates/Intel_competition_winner.png" alt="Certificate: 1st place in the project competition, Intel Summer School 2021" height="400">
       </a>
-      <br><sub><b>1st place</b>, Intel Summer School 2021</sub>
+      <br><sub><b>1st place</b>, project competition</sub>
     </td>
-    <td align="center" width="60%">
-      <a href="assets/certificates/Intel_Winter_School.pdf">
-        <img src="assets/certificates/Intel_Winter_School.png" alt="Certificate: Intel Winter School 2021 participant" height="360">
+    <td align="center" width="50%">
+      <a href="assets/certificates/Intel_Summer_School_participant.pdf">
+        <img src="assets/certificates/Intel_Summer_School_participant.png" alt="Certificate of participation, Intel Summer School 2021" height="400">
       </a>
-      <br><sub>Intel Winter School 2021</sub>
+      <br><sub>Certificate of participation</sub>
     </td>
   </tr>
 </table>
