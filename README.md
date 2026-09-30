@@ -18,6 +18,30 @@
 
 ---
 
+## Awards
+
+- 🥇 **1st place** in the project competition of the Intel Summer School on Computer Vision, held jointly with Lobachevsky University (UNN), July 5–23, 2021
+- 🎓 **Certificate of participation**, Intel Summer School on Computer Vision, July 5–23, 2021
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="assets/certificates/Intel_competition_winner.pdf">
+        <img src="assets/certificates/Intel_competition_winner.png" alt="Certificate: 1st place in the project competition, Intel Summer School 2021" height="400">
+      </a>
+      <br><sub><b>1st place</b>, project competition</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="assets/certificates/Intel_Summer_School_participant.pdf">
+        <img src="assets/certificates/Intel_Summer_School_participant.png" alt="Certificate of participation, Intel Summer School 2021" height="400">
+      </a>
+      <br><sub>Certificate of participation</sub>
+    </td>
+  </tr>
+</table>
+
+<sub>Click a certificate to open the original PDF.</sub>
+
 ## About
 
 QuickDraw is a real-time sketch recognition demo inspired by Google's
@@ -173,30 +197,6 @@ mo --input_model pretrained/model.onnx --output_dir mo_model \
    --scale_values "[58.395,57.12,57.375]" \
    --reverse_input_channels
 ```
-
-## Awards
-
-- 🥇 **1st place** in the project competition of the Intel Summer School on Computer Vision, held jointly with Lobachevsky University (UNN), July 5–23, 2021
-- 🎓 **Certificate of participation**, Intel Summer School on Computer Vision, July 5–23, 2021
-
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <a href="assets/certificates/Intel_competition_winner.pdf">
-        <img src="assets/certificates/Intel_competition_winner.png" alt="Certificate: 1st place in the project competition, Intel Summer School 2021" height="400">
-      </a>
-      <br><sub><b>1st place</b>, project competition</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="assets/certificates/Intel_Summer_School_participant.pdf">
-        <img src="assets/certificates/Intel_Summer_School_participant.png" alt="Certificate of participation, Intel Summer School 2021" height="400">
-      </a>
-      <br><sub>Certificate of participation</sub>
-    </td>
-  </tr>
-</table>
-
-<sub>Click a certificate to open the original PDF.</sub>
 
 ## Acknowledgements
 
